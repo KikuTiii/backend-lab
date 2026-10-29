@@ -1,6 +1,6 @@
 from itertools import count
 
-from repositories.order_repository import OrderRepository
+from repositories.protocol import OrderRepositoryProtocol
 from schemas import OrderInput, OrderOutput
 
 MAX_ORDER_QUANTITY = 100
@@ -15,7 +15,7 @@ class QuantityLimitExceededError(ValueError):
         super().__init__(f"Quantity {quantity} exceeds the limit of {limit}")
 
 class OrderService:
-    def __init__(self, repository: OrderRepository):
+    def __init__(self, repository: OrderRepositoryProtocol):
         self.repository = repository
 
     def create_order(self, order: OrderInput) -> OrderOutput:
