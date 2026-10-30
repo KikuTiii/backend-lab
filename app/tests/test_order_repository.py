@@ -1,21 +1,39 @@
 from repositories.order_repository import OrderRepository
-from schemas import OrderOutput
+from schemas import OrderInput
 
 
 def test_save_and_get_order():
     repository = OrderRepository()
 
-    order = OrderOutput(
-        id=1,
+    order = OrderInput(
         customer_id=42,
         product_id=10,
         quantity=2,
-        status="created",
     )
 
-    repository.save(order)
+    created = repository.save(order)
 
-    assert repository.get_by_id(1) == order
+    assert created.id > 0
+    assert created.customer_id == 42
+    assert created.product_id == 10
+    assert created.quantity == 2
+    assert created.status == "created"
+    assert repository.get_by_id(created.id) == created
+
+
+def test_save_generates_unique_ids():
+    repository = OrderRepository()
+
+    order = OrderInput(
+        customer_id=42,
+        product_id=10,
+        quantity=2,
+    )
+
+    first = repository.save(order)
+    second = repository.save(order)
+
+    assert first.id != second.id
 
 
 def test_get_nonexistent_order():

@@ -1,4 +1,6 @@
 """Testes unitários do OrderService, isolado do repositório real por um fake."""
+from itertools import count
+
 import pytest
 from pydantic import ValidationError
 
@@ -13,11 +15,19 @@ from services.order_service import (
 class FakeOrderRepository:
     def __init__(self) -> None:
         self.orders: dict[int, OrderOutput] = {}
+        self.order_ids = count(1)
         self.save_calls = 0
 
-    def save(self, order: OrderOutput) -> None:
-        self.orders[order.id] = order
+    def save(self, order: OrderInput) -> OrderOutput:
+        created = OrderOutput(
+            id=next(self.order_ids),
+            status="created",
+            **order.model_dump(),
+        )
+        self.orders[created.id] = created
         self.save_calls += 1
+
+        return created
 
     def get_by_id(self, order_id: int) -> OrderOutput | None:
         return self.orders.get(order_id)

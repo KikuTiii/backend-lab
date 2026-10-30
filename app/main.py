@@ -1,12 +1,17 @@
+import os
+
+from dotenv import load_dotenv
 from fastapi import FastAPI, status, HTTPException
 
-from repositories.order_repository import OrderRepository
+from repositories.postgres_order_repository import PostgresOrderRepository
 from schemas import OrderInput, OrderOutput
 from services.order_service import OrderService, QuantityLimitExceededError
 
+load_dotenv()
+
 app = FastAPI()
 
-order_repository = OrderRepository()
+order_repository = PostgresOrderRepository(os.environ["DATABASE_URL"])
 order_service = OrderService(order_repository)
 
 @app.post("/orders", status_code=status.HTTP_201_CREATED, response_model=OrderOutput)

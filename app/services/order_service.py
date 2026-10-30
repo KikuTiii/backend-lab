@@ -1,12 +1,7 @@
-from itertools import count
-
 from repositories.protocol import OrderRepositoryProtocol
 from schemas import OrderInput, OrderOutput
 
 MAX_ORDER_QUANTITY = 100
-
-order_ids = count(1)
-
 
 class QuantityLimitExceededError(ValueError):
     def __init__(self, quantity: int, limit: int = MAX_ORDER_QUANTITY):
@@ -22,15 +17,7 @@ class OrderService:
         if order.quantity > MAX_ORDER_QUANTITY:
             raise QuantityLimitExceededError(order.quantity)
 
-        new_order = OrderOutput(
-            id=next(order_ids),
-            status="created",
-            **order.model_dump(),
-        )
-        self.repository.save(new_order)
-
-        return new_order
-
+        return self.repository.save(order)
 
     def get_order(self, order_id: int) -> OrderOutput | None:
         return self.repository.get_by_id(order_id)
