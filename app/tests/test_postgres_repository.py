@@ -10,9 +10,9 @@ load_dotenv()
 
 
 @pytest.mark.integration
-def test_save_order_postgres():
+def test_save_order_postgres(clean_test_database):
     repository = PostgresOrderRepository(
-        os.environ["DATABASE_URL"]
+        os.environ["TEST_DATABASE_URL"]
     )
 
     order = OrderInput(
@@ -30,9 +30,9 @@ def test_save_order_postgres():
 
 
 @pytest.mark.integration
-def test_get_order_postgres():
+def test_get_order_postgres(clean_test_database):
     repository = PostgresOrderRepository(
-        os.environ["DATABASE_URL"]
+        os.environ["TEST_DATABASE_URL"]
     )
 
     order = OrderInput(
@@ -49,9 +49,9 @@ def test_get_order_postgres():
 
 
 @pytest.mark.integration
-def test_get_nonexistent_order_postgres():
+def test_get_nonexistent_order_postgres(clean_test_database):
     repository = PostgresOrderRepository(
-        os.environ["DATABASE_URL"]
+        os.environ["TEST_DATABASE_URL"]
     )
 
     result = repository.get_by_id(-999999)
